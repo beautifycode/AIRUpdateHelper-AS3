@@ -1,8 +1,8 @@
 ## Author
 __Marvin Blase__ 
-[Blog](www.beautifycode.com "Homepage")
-[Twitter](www.twitter.com/@beautifycode "Twitter")
-[URL](http://labs.beautifycode.com/airUpdateHelper/demoshot.jpg "Screenshot")
+[Blog](http://www.beautifycode.com "Homepage")
+[Twitter](http://www.twitter.com/beautifycode "Twitter")
+[Screenshot](http://labs.beautifycode.com/airUpdateHelper/demoshot.jpg).
 
 
 ## About
