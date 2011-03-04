@@ -11,7 +11,7 @@
 	<copyright>Copyright 2009, Example Co., Inc.</copyright>
 	<initialWindow>
 		<content>SampleAirApp.swf</content>
-		<title>Example Application</title>
+		<title>SampleAirApp</title>
 		<systemChrome>standard</systemChrome>
 		<transparent>false</transparent>
 		<visible>true</visible>
