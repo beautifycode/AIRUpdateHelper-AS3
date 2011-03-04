@@ -1,7 +1,7 @@
-package com.beautifycode.AIRUpdateHelper {
+package com.beautifycode.AIRUpdateHelper
+{
 	import flash.desktop.NativeApplication;
 	import flash.desktop.Updater;
-	import flash.display.DisplayObjectContainer;
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
 	import flash.events.MouseEvent;
@@ -15,24 +15,47 @@ package com.beautifycode.AIRUpdateHelper {
 	/**
 	 * @author Marvin
 	 */
-	public class AIRUpdateHelper {
+	public class AIRUpdateHelper
+	{
+
 		private static var _updateFileLocation : String;
-		private static var _forceUpdate : Boolean;
+
+		private static var _availableVersion : String;
 		private static var _downloadLocation : String;
+		private static var _forceUpdate : Boolean;
 		private static var _changeLog : String;
-		private static var _callbackStage : DisplayObjectContainer;
+
 		private static var _failHandler : Function;
 		private static var _skipHandler : Function;
-		private static var _availableVersion : String;
-		private static var _currentVersion : String;
-		private static var _appName : String;
 
-		public function AIRUpdateHelper() {
+		private static var _appName : String;
+		private static var _currentVersion : String;
+
+		private static var _updateFilePathLoader : URLLoader;
+		private static var _downloadLoader : URLLoader;
+
+		/**
+		 * AIRUpdateHelper
+		 * 
+		 * @throws AIRUpdateHelper cannot be constructed.
+		 */
+		public function AIRUpdateHelper()
+		{
+			throw new Error("AIRUpdateHelper cannot be constructed.");
 		}
 
-		public static function checkForUpdate(updateFileLocation : String, callbackStage : DisplayObjectContainer, skipHandler : Function = null, failHandler : Function = null) : void {
+		/**
+		 * Check for new update.
+		 * 
+		 * @param updateFileLocation Path to XML file with versioning info.
+		 * @param skipHandler Callback called once the user decides not to update. No arguments.
+		 * @param failHandler Callback called once something goes wrong. One argument <code>errMsg : String</code>
+		 */
+		public static function checkForUpdate(updateFileLocation : String, skipHandler : Function = null, failHandler : Function = null) : void
+		{
+			destroy();
+			
 			_updateFileLocation = updateFileLocation;
-			_callbackStage = callbackStage;
 
 			_skipHandler = skipHandler;
 			_failHandler = failHandler;
@@ -40,56 +63,108 @@ package com.beautifycode.AIRUpdateHelper {
 			_loadUpdateData();
 		}
 
-		private static function _loadUpdateData() : void {
-			var _updateFilePathReq : URLRequest = new URLRequest(_updateFileLocation);
+		/**
+		 * Destroys all references and removes all internal listeners.
+		 * <p><strong>Note:</strong>AIRUpdateHelper#checkForUpdate will still work after calling destroy.</p>
+		 */
+		public static function destroy() : void
+		{
+			_skipHandler = null;
+			_failHandler = null;
 
-			var _updateFilePathLoader : URLLoader = new URLLoader();
-			_updateFilePathLoader.load(_updateFilePathReq);
-			_updateFilePathLoader.addEventListener(Event.COMPLETE, _updateFileLoaded);
-			_updateFilePathLoader.addEventListener(IOErrorEvent.IO_ERROR, _onDownloadFail);
+			if(_updateFilePathLoader)
+			{
+				_updateFilePathLoader.removeEventListener(Event.COMPLETE, _updateFileLoaded);
+				_updateFilePathLoader.removeEventListener(IOErrorEvent.IO_ERROR, _onDownloadFail);
+				try
+				{
+					_updateFilePathLoader.close();
+				}
+				catch(error : Error)
+				{
+				}
+				_updateFilePathLoader = null;
+			}
+
+			if(_downloadLoader)
+			{
+				_downloadLoader.removeEventListener(Event.COMPLETE, _writeFileToSystem);
+				_downloadLoader.removeEventListener(IOErrorEvent.IO_ERROR, _onDownloadFail);
+				try
+				{
+					_downloadLoader.close();
+				}
+				catch(error : Error)
+				{
+				}
+				_downloadLoader = null;
+			}
 		}
 
-		private static function _updateFileLoaded(event : Event) : void {
-			_appName = getAppInfos().name;
-			_currentVersion = getAppInfos().version;
+		private static function _loadUpdateData() : void
+		{
+			_updateFilePathLoader = new URLLoader();
+			_updateFilePathLoader.addEventListener(Event.COMPLETE, _updateFileLoaded);
+			_updateFilePathLoader.addEventListener(IOErrorEvent.IO_ERROR, _onDownloadFail);
+			_updateFilePathLoader.load(new URLRequest(_updateFileLocation));
+		}
 
-			var updateFileXML : XML = new XML(event.target.data);
+		private static function _updateFileLoaded(event : Event) : void
+		{
+			var appInfo : Object = getAppInfo();
+			_appName = appInfo.name;
+			_currentVersion = appInfo.version;
+
+			var updateFileXML : XML = new XML(_updateFilePathLoader.data);
 			_availableVersion = updateFileXML.version;
 			_downloadLocation = updateFileXML.downloadLocation;
 			_forceUpdate = Boolean(updateFileXML.forceUpdate == "true");
 			_changeLog = updateFileXML.message;
 
-			if (Number(_availableVersion) > Number(_currentVersion)) {
-				if (!_forceUpdate) AIRUpdateUI.createUpdateDialog(_appName, _currentVersion, _availableVersion, _changeLog, _confirmHandler, _cancelHandler);
-				else AIRUpdateUI.createForceUpdateDialog(_appName, _currentVersion, _availableVersion, _changeLog, _confirmHandler);
-			} else {
-				_cancelHandler(null);
+			if(Number(_availableVersion) > Number(_currentVersion))
+			{
+				if(!_forceUpdate)
+					AIRUpdateUI.createUpdateDialog(_appName, _currentVersion, _availableVersion, _changeLog, _confirmHandler, _cancelHandler);
+				else
+					AIRUpdateUI.createForceUpdateDialog(_appName, _currentVersion, _availableVersion, _changeLog, _confirmHandler);
 			}
+			else
+				_cancelHandler(null);
 		}
 
-		private static function _cancelHandler(event : MouseEvent) : void {
+		private static function _cancelHandler(event : MouseEvent) : void
+		{
 			AIRUpdateUI.close();
-			_skipHandler();
+			if(_skipHandler != null)
+				_skipHandler();
+
+			destroy();
 		}
 
-		private static function _confirmHandler(event : MouseEvent) : void {
-			var donwloadRequest : URLRequest = new URLRequest(_downloadLocation);
-			var downloadLoader : URLLoader = new URLLoader();
-			downloadLoader.dataFormat = URLLoaderDataFormat.BINARY;
-			downloadLoader.load(donwloadRequest);
-			downloadLoader.addEventListener(Event.COMPLETE, _writeFileToSystem);
-			downloadLoader.addEventListener(IOErrorEvent.IO_ERROR, _onDownloadFail);
+		private static function _confirmHandler(event : MouseEvent) : void
+		{
+			_downloadLoader = new URLLoader();
+			_downloadLoader.dataFormat = URLLoaderDataFormat.BINARY;
+			_downloadLoader.addEventListener(Event.COMPLETE, _writeFileToSystem);
+			_downloadLoader.addEventListener(IOErrorEvent.IO_ERROR, _onDownloadFail);
+			_downloadLoader.load(new URLRequest(_downloadLocation));
 
 			// @TODO: ProgressHandler
 			// loader.addEventListener(ProgressEvent.PROGRESS, _updateProgressHandler);
 		}
 
-		private static function _onDownloadFail(event : *) : void {
-			_failHandler("There was an error loading your remote version-config file.");
+		private static function _onDownloadFail(event : IOErrorEvent) : void
+		{
+			if(_failHandler != null)
+				_failHandler("There was an error loading your remote version-config file.");
+
+			destroy();
 		}
 
-		private static function _writeFileToSystem(event : Event) : void {
-			try {
+		private static function _writeFileToSystem(event : Event) : void
+		{
+			try
+			{
 				var filename : String = _downloadLocation.split("/").pop() as String;
 				var file : File = File.documentsDirectory.resolvePath(filename);
 				var stream : FileStream = new FileStream();
@@ -98,17 +173,24 @@ package com.beautifycode.AIRUpdateHelper {
 				stream.close();
 
 				_installUpdate(file);
-			} catch (error : Error) {
-				_failHandler("The downloaded file was not written correctly.");
 			}
+			catch (error : Error)
+			{
+				if(_failHandler != null)
+					_failHandler("The downloaded file was not written correctly.");
+			}
+
+			destroy();
 		}
 
-		private static function _installUpdate(file : File) : void {
+		private static function _installUpdate(file : File) : void
+		{
 			var updater : Updater = new Updater();
 			updater.update(file, _availableVersion);
 		}
 
-		public static function getAppInfos() : Object {
+		public static function getAppInfo() : Object
+		{
 			var appXml : XML = NativeApplication.nativeApplication.applicationDescriptor;
 			var ns : Namespace = appXml.namespace();
 

@@ -1,4 +1,5 @@
-package com.beautifycode.SampleAirApp {
+package com.beautifycode.SampleAirApp
+{
 	import com.beautifycode.AIRUpdateHelper.AIRUpdateHelper;
 
 	import flash.display.Sprite;
@@ -9,32 +10,36 @@ package com.beautifycode.SampleAirApp {
 	/**
 	 * @author Marvin
 	 */
-
 	[SWF(backgroundColor="#FFFFFF", frameRate="31", width="550", height="400")]
-	public class SampleAirApp extends Sprite {
+	public class SampleAirApp extends Sprite
+	{
 		private var _layout : AppLayout;
 
-		public function SampleAirApp() {
+		public function SampleAirApp()
+		{
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.align = StageAlign.TOP_LEFT;
-			
+
 			addEventListener(Event.ADDED_TO_STAGE, onStageAdded);
 		}
 
-		private function onStageAdded(event : Event) : void {
+		private function onStageAdded(event : Event) : void
+		{
 			_layout = new AppLayout();
-			_layout.versionTF.text = AIRUpdateHelper.getAppInfos().version;
+			_layout.versionTF.text = AIRUpdateHelper.getAppInfo().version;
 			_layout.statusTF.text = "Waiting for user choice.";
 			addChild(_layout);
 
-			AIRUpdateHelper.checkForUpdate("http://labs.beautifycode.com/airUpdateHelper/version.xml", this, onSkip, onFail);
+			AIRUpdateHelper.checkForUpdate("http://labs.beautifycode.com/airUpdateHelper/version.xml", onSkip, onFail);
 		}
 
-		private function onSkip() : void {
+		private function onSkip() : void
+		{
 			_layout.statusTF.text = "Update was skipped / No updates available!";
 		}
 
-		private function onFail(msg:String) : void {
+		private function onFail(msg : String) : void
+		{
 			_layout.statusTF.text = msg;
 		}
 	}
