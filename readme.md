@@ -8,6 +8,7 @@ __Marvin Blase__
 [Screenshot](http://labs.beautifycode.com/airUpdateHelper/demoshot.jpg)
 
 A library to provide the use of Adobe AIR's UpdateFramework with Actionscript 3. Easy to use, design nearly identical to Flex's built-in way of using the framework.
+Simply write: AIRUpdateHelper.checkForUpdate(path-to-your-version.xml, this, onSkip, onFail);
 
 ## License
 Copyright (c) <2010> <copyright holders>
