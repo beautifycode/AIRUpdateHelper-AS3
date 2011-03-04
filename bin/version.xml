@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<currentVersion>
+	<version>1.1</version>
+	<downloadLocation><![CDATA[http://labs.beautifycode.com/sampleAirApp.air]]></downloadLocation>
+    <forceUpdate>false</forceUpdate> 
+    <message><![CDATA[This is the message shown as Changelog - written in the version.xml on your server.]]></message>
+</currentVersion>
