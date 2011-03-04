@@ -59,7 +59,7 @@ package com.beautifycode.AIRUpdateHelper {
 		}
 
 		public static function createForceUpdateDialog(appName : String, currentVersion : String, availableVersion : String, changeLog : String, confirmHandler : Function) : void {
-			// quit instead of skip button, red cross icon
+			// @TODO: quit instead of skip button, red cross icon
 		}
 
 		public static function close() : void {
