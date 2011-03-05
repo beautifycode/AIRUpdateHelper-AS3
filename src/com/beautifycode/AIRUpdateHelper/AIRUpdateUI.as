@@ -1,4 +1,5 @@
-package com.beautifycode.AIRUpdateHelper {
+package com.beautifycode.AIRUpdateHelper
+{
 	import com.bit101.components.TextArea;
 
 	import flash.display.NativeWindow;
@@ -13,16 +14,19 @@ package com.beautifycode.AIRUpdateHelper {
 	/**
 	 * @author Marvin
 	 */
-	public class AIRUpdateUI extends Sprite {
+	public class AIRUpdateUI extends Sprite
+	{
 		private static var _uiWindow : NativeWindow;
 		private static var _changeLogTextArea : TextArea;
 		private static var _uiWindowOptions : NativeWindowInitOptions;
 		private static var _uiContainer : UIContainer;
 
-		public function AIRUpdateUI() {
+		public function AIRUpdateUI()
+		{
 		}
 
-		public static function createUpdateDialog(appName : String, currentVersion : String, availableVersion : String, changeLog : String, confirmHandler : Function, skipHandler : Function) : void {
+		public static function createUpdateDialog(appName : String, currentVersion : String, availableVersion : String, changeLog : String, confirmHandler : Function, skipHandler : Function) : void
+		{
 			_changeLogTextArea = new TextArea();
 			_changeLogTextArea.x = 17;
 			_changeLogTextArea.y = 245;
@@ -58,11 +62,13 @@ package com.beautifycode.AIRUpdateHelper {
 			_uiWindow.orderToFront();
 		}
 
-		public static function createForceUpdateDialog(appName : String, currentVersion : String, availableVersion : String, changeLog : String, confirmHandler : Function) : void {
+		public static function createForceUpdateDialog(appName : String, currentVersion : String, availableVersion : String, changeLog : String, confirmHandler : Function) : void
+		{
 			// @TODO: quit instead of skip button, red cross icon
 		}
 
-		public static function close() : void {
+		public static function close() : void
+		{
 			_uiWindow.close();
 		}
 	}

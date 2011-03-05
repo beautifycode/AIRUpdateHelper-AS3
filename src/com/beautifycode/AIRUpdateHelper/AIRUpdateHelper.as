@@ -54,7 +54,7 @@ package com.beautifycode.AIRUpdateHelper
 		public static function checkForUpdate(updateFileLocation : String, skipHandler : Function = null, failHandler : Function = null) : void
 		{
 			destroy();
-			
+
 			_updateFileLocation = updateFileLocation;
 
 			_skipHandler = skipHandler;
@@ -121,7 +121,7 @@ package com.beautifycode.AIRUpdateHelper
 			_forceUpdate = Boolean(updateFileXML.forceUpdate == "true");
 			_changeLog = updateFileXML.message;
 
-			if(Number(_availableVersion) > Number(_currentVersion))
+			if(_currentVersion != _availableVersion)
 			{
 				if(!_forceUpdate)
 					AIRUpdateUI.createUpdateDialog(_appName, _currentVersion, _availableVersion, _changeLog, _confirmHandler, _cancelHandler);
