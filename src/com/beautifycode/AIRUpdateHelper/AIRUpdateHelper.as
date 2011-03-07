@@ -17,21 +17,52 @@ package com.beautifycode.AIRUpdateHelper
 	 */
 	public class AIRUpdateHelper
 	{
-
+		/**
+		 * @private
+		 */
 		private static var _updateFileLocation : String;
-
+		/**
+		 * @private
+		 */
 		private static var _availableVersion : String;
+		/**
+		 * @private
+		 */
 		private static var _downloadLocation : String;
+		/**
+		 * @private
+		 */
 		private static var _forceUpdate : Boolean;
+		/**
+		 * @private
+		 */
 		private static var _changeLog : String;
 
+		/**
+		 * @private
+		 */
 		private static var _failHandler : Function;
+		/**
+		 * @private
+		 */
 		private static var _skipHandler : Function;
 
+		/**
+		 * @private
+		 */
 		private static var _appName : String;
+		/**
+		 * @private
+		 */
 		private static var _currentVersion : String;
 
+		/**
+		 * @private
+		 */
 		private static var _updateFilePathLoader : URLLoader;
+		/**
+		 * @private
+		 */
 		private static var _downloadLoader : URLLoader;
 
 		/**
@@ -64,8 +95,25 @@ package com.beautifycode.AIRUpdateHelper
 		}
 
 		/**
-		 * Destroys all references and removes all internal listeners.
-		 * <p><strong>Note:</strong>AIRUpdateHelper#checkForUpdate will still work after calling destroy.</p>
+		 * Gets basic info about the current app.
+		 * 
+		 * @return Object with two properties <code>version</code> and <code>name</code>. 
+		 */
+		public static function getAppInfo() : Object
+		{
+			var appXml : XML = NativeApplication.nativeApplication.applicationDescriptor;
+			var ns : Namespace = appXml.namespace();
+
+			var appInfoObj : Object = new Object();
+			appInfoObj.version = appXml.ns::version[0];
+			appInfoObj.name = appXml.ns::name[0];
+
+			return appInfoObj;
+		}
+
+		/**
+		 * Destroys all references and removes all internal listeners. Doubles as a "cancel" function.
+		 * <p><strong>Note:</strong> AIRUpdateHelper#checkForUpdate will still work after calling destroy.</p>
 		 */
 		public static function destroy() : void
 		{
@@ -101,6 +149,9 @@ package com.beautifycode.AIRUpdateHelper
 			}
 		}
 
+		/**
+		 * @private
+		 */
 		private static function _loadUpdateData() : void
 		{
 			_updateFilePathLoader = new URLLoader();
@@ -109,6 +160,9 @@ package com.beautifycode.AIRUpdateHelper
 			_updateFilePathLoader.load(new URLRequest(_updateFileLocation));
 		}
 
+		/**
+		 * @private
+		 */
 		private static function _updateFileLoaded(event : Event) : void
 		{
 			var appInfo : Object = getAppInfo();
@@ -132,6 +186,9 @@ package com.beautifycode.AIRUpdateHelper
 				_cancelHandler(null);
 		}
 
+		/**
+		 * @private
+		 */
 		private static function _cancelHandler(event : MouseEvent) : void
 		{
 			AIRUpdateUI.close();
@@ -141,6 +198,9 @@ package com.beautifycode.AIRUpdateHelper
 			destroy();
 		}
 
+		/**
+		 * @private
+		 */
 		private static function _confirmHandler(event : MouseEvent) : void
 		{
 			_downloadLoader = new URLLoader();
@@ -153,6 +213,9 @@ package com.beautifycode.AIRUpdateHelper
 			// loader.addEventListener(ProgressEvent.PROGRESS, _updateProgressHandler);
 		}
 
+		/**
+		 * @private
+		 */
 		private static function _onDownloadFail(event : IOErrorEvent) : void
 		{
 			if(_failHandler != null)
@@ -161,6 +224,9 @@ package com.beautifycode.AIRUpdateHelper
 			destroy();
 		}
 
+		/**
+		 * @private
+		 */
 		private static function _writeFileToSystem(event : Event) : void
 		{
 			try
@@ -183,22 +249,13 @@ package com.beautifycode.AIRUpdateHelper
 			destroy();
 		}
 
+		/**
+		 * @private
+		 */
 		private static function _installUpdate(file : File) : void
 		{
 			var updater : Updater = new Updater();
 			updater.update(file, _availableVersion);
-		}
-
-		public static function getAppInfo() : Object
-		{
-			var appXml : XML = NativeApplication.nativeApplication.applicationDescriptor;
-			var ns : Namespace = appXml.namespace();
-
-			var appInfoObj : Object = new Object();
-			appInfoObj.version = appXml.ns::version[0];
-			appInfoObj.name = appXml.ns::name[0];
-
-			return appInfoObj;
 		}
 	}
 }

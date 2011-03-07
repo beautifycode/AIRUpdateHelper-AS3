@@ -1,4 +1,4 @@
-package com.beautifycode.SampleAirApp
+package com.beautifycode.sample
 {
 	import com.beautifycode.AIRUpdateHelper.AIRUpdateHelper;
 
@@ -29,6 +29,7 @@ package com.beautifycode.SampleAirApp
 			_layout.versionTF.text = AIRUpdateHelper.getAppInfo().version;
 			_layout.statusTF.text = "Waiting for user choice.";
 			addChild(_layout);
+			
 
 			AIRUpdateHelper.checkForUpdate("http://labs.beautifycode.com/airUpdateHelper/version.xml", onSkip, onFail);
 		}
