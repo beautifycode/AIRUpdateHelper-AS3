@@ -1,9 +1,9 @@
 ## Author
-__Marvin Blase__ | 
+__Marvin Blase__
 [Blog](http://www.beautifycode.com "Homepage") | 
 [Twitter](http://www.twitter.com/beautifycode "Twitter")
 
-__Matan Uberstein__ |  
+__Matan Uberstein__
 [Blog](http://www.doesflash.com "Homepage") | 
 [Twitter](http://www.twitter.com/matanube "Twitter")
 
