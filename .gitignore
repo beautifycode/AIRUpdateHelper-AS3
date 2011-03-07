@@ -1,4 +1,6 @@
 /.settings/*
+/bin/*.swc
+/bin/*.cache
 
 .actionScriptProperties
 .flexProperties
